@@ -13,8 +13,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  import {Base64} from "./Base64.sol";
 
 contract OnChainNFT is ERC721URIStorage, Ownable {
-    event Minted(uint256 tokenId);
-
     
     uint256 private _tokenIds;
 
