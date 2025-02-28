@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -13,12 +13,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  import {Base64} from "./Base64.sol";
 
 contract OnChainNFT is ERC721URIStorage, Ownable {
+    event Minted(uint256 tokenId);
+
     
     uint256 private _tokenIds;
 
     constructor() ERC721("OnChainNFT", "ONC") Ownable(msg.sender) {
     }
 
+    /* Converts an SVG to Base64 string */
     function svgToImageURI(string memory svg)
         public
         pure
@@ -29,6 +32,7 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
 
+    /* Generates a tokenURI using Base64 string as the image */
     function formatTokenURI(string memory imageURI)
         public
         pure
@@ -41,7 +45,7 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
-                                '{"name": "SAMUEL OWEN ON-CHAINED", "description": "A simple SVG based on-chain NFT", "image":"',
+                                '{"name": "SAMUEL ON-CHAINED", "description": "A simple SVG based on-chain NFT", "image":"',
                                 imageURI,
                                 '"}'
                             )
@@ -49,5 +53,17 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
                     )
                 )
             );
+    }
+    function mint(string memory svg) public onlyOwner {
+        string memory imageURI = svgToImageURI(svg);
+        string memory tokenURI = formatTokenURI(imageURI);
+
+        _tokenIds;
+        uint256 newItemId = _tokenIds;
+
+        _safeMint(msg.sender, newItemId);
+        _setTokenURI(newItemId, tokenURI);
+
+        emit Minted(newItemId);
     }
 }
